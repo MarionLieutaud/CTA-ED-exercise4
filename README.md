@@ -3,9 +3,9 @@ In this repository you will find the material for exercise 4 (to be completed fo
 
 # Starting instructions
 
-This is an INDIVIDUAL exercise. Start by forking this repository as shown in the class (click on the 'fork' tab towards the top right). You can then clone the forked repository (using Github Desktop as we did last week) so you can work on the R code on your own laptop. Once you're happy with your code on R, save your edits, *knit your code*, then go to Github Desktop, click 'commit to main' and then 'push origin'. This will push your commits onto the online forked repository that I can also see. Don't forget to click on 'push origin' or it won't work.
+This is a group exercise (see email with group allocation to know who your teammates are!). See previous exercises for instructions on how to organise forking and cloning for group work. Kit your output into a final pdf or word doc - this should show up in your shared Github repo by next class.
 
-The exercise questions are at the end of the .Rmd file. Make sure you fill out your name in the header of the Rmarkdown document.
+The exercise questions are at the end of the .Rmd file. Make sure you fill out your names in the header of the Rmarkdown document.
 
 To do this exercise, you should draw on the code presented in the exercise, the demos, previous exercises (the answers for previous exercise are in the respective repo) and the livecoding scripts that we have developed in the tutorials (these are available on Learn, in the tutorial material section for each week). You can also look for help and inspiration in other online resources, including for example the quanteda tutorial page [https://quanteda.io], the quanteda quick start guide [https://quanteda.io/articles/quickstart], and Stack Overflow [https://stackoverflow.com]. You may find Regex Cheatsheets (e.g. [https://hypebright.nl/index.php/en/2020/05/25/ultimate-cheatsheet-for-regex-in-r-2/] and the Stringr package cheatsheet (for string detection) [https://raw.githubusercontent.com/rstudio/cheatsheets/main/strings.pdf] particularly useful.
 

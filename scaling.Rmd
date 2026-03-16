@@ -1,8 +1,8 @@
 ---
 title: "CTA-ED Exercise 4: Scaling techniques (with correct answers)"
-author: "Marion Lieutaud"
-date: "6/03/2024"
-output: html_document
+author: "Zhitong Chen"
+date: "10/03/2024"
+output: "html_document"
 ---
 
 # Introduction
@@ -98,7 +98,7 @@ dim(dfm_newstweets)
 #### estimate the Wordfish model ####
 set.seed(123L)
 dfm_newstweets_results <- textmodel_wordfish(dfm_newstweets, 
-                                             sparse = TRUE)
+                                             )
 
 ```
 
@@ -177,15 +177,61 @@ dim(kaneko_dfm_study1)
 ```{r}
 ## estimate the Wordfish model
 
+# Set a random seed to ensure reproducibility of the model
+set.seed(123L)
+
+# Fit the Wordfish model
+kaneko_results <- textmodel_wordfish(kaneko_dfm_study1)
+
+# Print a summary of the fitted model
+summary(kaneko_results)
 ```
 Write a paragraph here explaining and interpreting your results 
 
+The Wordfish model estimates each newspaper's latent ideological position (theta, θ) on a single underlying dimension, inferred purely from word-usage patterns — without any pre-assigned labels. The results reveal a clear left–right spectrum among the ten Japanese newspapers in their coverage of the 2015 security legislation (安保法制). On the liberal/left end, Chunichi (θ = −1.22), Asahi (θ = −0.99), and Kahoku (θ = −0.57) score most negatively, suggesting they use language more critical of the legislation. On the conservative/right end, Yomiuri (θ = 1.60), Nikkei (θ = 1.26), and Sankei (θ = 1.25) score most positively, indicating language more supportive or neutral toward the Abe cabinet's agenda. The feature scores (beta, β) reinforce this interpretation: words like 安倍内閣 (β = −1.62) and 越え (β = −1.36, implying "crossing a line/overstepping") are associated with the liberal pole, while terms like 米 ("U.S.", β = +0.54) and 安保 ("security alliance", β = +0.22) lean toward the conservative pole. The small standard errors across all newspapers indicate high estimation precision, lending confidence to these positional estimates.
+
 2. Visualize the results
-```{r, fig.cap="Wordfish model estimates of Japanese newspapers' editorial texts}
+```{r, wordfish_plot, fig.cap='Wordfish model estimates of Japanese newspapers\' editorial texts'}
 ## We can then plot our estimates of the thetas---i.e., the estimates of the latent Japanese newspaper position.
+
+# Plot 1: Document-level scaling (theta estimates per newspaper) # textplot_scale1d() visualizes the estimated latent positions (thetas) with 95% confidence intervals shown as horizontal bars
+textplot_scale1d(kaneko_results)
+                 
+# Plot 2: Feature-level scaling (beta estimates per word) 
+# margin = "features" switches the plot to show word-level betas
+textplot_scale1d(kaneko_results, margin = "features")
+
+# Optional: Inspect top discriminating words manually ---
+
+# Extract the feature (word) names from the model
+features_k <- kaneko_results[["features"]]
+
+# Extract the beta coefficients (word-level discrimination parameters)
+betas_k <- kaneko_results[["beta"]]
+
+# Combine into a data frame for easy sorting and inspection
+feat_betas_k <- as.data.frame(cbind(features_k, betas_k))
+
+# Convert beta column from character to numeric for correct sorting
+feat_betas_k$betas_k <- as.numeric(feat_betas_k$betas_k)
+
+# Sort by descending beta and show top 20 most discriminating words
+feat_betas_k %>%
+  arrange(desc(betas_k)) %>%   # Sort from highest to lowest beta 
+  top_n(20) %>%                # Keep only the top 20 rows 
+  kbl() %>%                    # Format as a nice table  
+  kable_styling(bootstrap_options = "striped")  # Add striped styling
 ```
 
 Write here the interpretation of your plot(s)
+Plot 1: Document-Level Scaling (Theta Estimates)
+The dot plot displays each newspaper's estimated ideological position (θ) with 95% confidence intervals. The horizontal spread confirms a robust left–right divide: Chunichi and Asahi anchor the liberal pole (θ ≈ −1.22, −0.99), while Yomiuri, Nikkei, and Sankei occupy the conservative pole (θ ≈ 1.60, 1.26, 1.25). The middle cluster — Mainichi, Nishinippon, Hokkaido, Chugoku, and Kahoku — sits in mildly negative territory, suggesting a centre-left lean. Critically, the confidence intervals are very narrow and non-overlapping between the two poles, indicating that the model's positional estimates are statistically well-separated and reliable.
+
+Plot 2: Feature-Level Scaling (Beta–Psi Scatter)
+This plot maps every word in the vocabulary by its beta (x-axis: ideological discrimination) and psi (y-axis: overall word frequency). Words near β = 0 are used equally across all newspapers and thus carry little discriminating information. Words with strongly negative beta lean toward the liberal pole; words with strongly positive beta lean conservative. The dense central mass reflects the many common, uninformative words. The sparse tails — especially words with β < −3 or β > +2 — are the ideologically "loaded" terms that most distinguish conservative from liberal coverage.
+
+Top Discriminating Words (Highest Beta)
+The top-beta words reveal what language is disproportionately used by conservative-leaning papers. 国際平和協力 ("international peace cooperation", β = 3.07) and 世界平和 ("world peace", β = 2.67) are striking — conservative papers appear to frame the security legislation in the language of positive international contribution, whereas liberal papers likely use more adversarial or constitutional-crisis framing. Words like 引き延ばし ("delay/stalling", β = 2.45) and 気がかり ("concern/worry", β = 2.42) suggest conservative papers also reported on legislative process friction and public anxiety, but from a pro-passage perspective.
 
 Don't forget to knit!
 
